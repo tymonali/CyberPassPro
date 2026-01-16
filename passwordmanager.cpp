@@ -14,6 +14,11 @@ PasswordManager::PasswordManager(QObject *parent)
     : QObject{parent}, m_networkManager(new QNetworkAccessManager(this)) {}
 
 void PasswordManager::generate(int length, bool upper, bool lower, bool digits, bool special) {
+    if (length <= 0) {
+        m_lastPassword = "";
+        emit passwordChanged();
+        return;
+    }
     QString charset;
     if (upper)   charset += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     if (lower)   charset += "abcdefghijklmnopqrstuvwxyz";

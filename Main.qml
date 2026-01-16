@@ -339,6 +339,40 @@ Window
                     }
                 }
 
+                Button {
+                    text: "ОЧИСТИТЬ ФОРМУ"
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 40
+
+                    // Стилизуем под "второстепенную" кнопку
+                    background: Rectangle {
+                        color: "transparent"
+                        border.color: parent.pressed ? "#f0abfc" : "#475569"
+                        radius: 6
+                    }
+
+                    contentItem: Text {
+                        text: parent.text
+                        color: parent.pressed ? "#f0abfc" : "#94a3b8"
+                        font.bold: true
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                    }
+
+                    onClicked: {
+                        // 1. Очищаем все текстовые поля
+                        urlInput.text = ""
+                        resourceInput.text = ""
+                        nickInput.text = ""
+
+                        // 2. Сбрасываем пароль (чтобы ячейки стали пустыми)
+                        backend.generate(0, false, false, false, false)
+
+                        // 3. ПЕРЕВОДИМ ФОКУС (самое важное для удобства)
+                        urlInput.forceActiveFocus()
+                    }
+                }
+
                 // --- ОБНОВЛЕННАЯ ВИЗУАЛИЗАЦИЯ ПАРОЛЯ ---
                         Rectangle {
                             Layout.fillWidth: true

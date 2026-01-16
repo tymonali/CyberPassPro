@@ -180,6 +180,7 @@ Window
     ColumnLayout
     {
         anchors.fill: parent
+        anchors.topMargin: 50 // Даем место для кнопки меню
         anchors.margins: 30
         spacing: 20
 

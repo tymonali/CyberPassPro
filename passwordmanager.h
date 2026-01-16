@@ -16,6 +16,8 @@ class PasswordManager : public QObject
 public:
     explicit PasswordManager(QObject *parent = nullptr);
 
+    Q_INVOKABLE void setManualPassword(const QString &password);
+
     Q_INVOKABLE void copyToClipboard(const QString &text);
 
     // Метод для генерации

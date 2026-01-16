@@ -13,6 +13,12 @@
 PasswordManager::PasswordManager(QObject *parent)
     : QObject{parent}, m_networkManager(new QNetworkAccessManager(this)) {}
 
+void PasswordManager::setManualPassword(const QString &password) {
+    if (password.isEmpty()) return;
+    m_lastPassword = password;
+    emit passwordChanged();
+}
+
 void PasswordManager::generate(int length, bool upper, bool lower, bool digits, bool special) {
     if (length <= 0) {
         m_lastPassword = "";

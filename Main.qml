@@ -79,6 +79,104 @@ Window
         }
     }
 
+    // Кнопка-бургер в верхнем левом углу
+        ToolButton {
+            id: menuButton
+            text: "☰"
+            font.pixelSize: 24
+            z: 10 // Чтобы была поверх всего
+            onClicked: sideMenu.open()
+
+            background: Rectangle { color: "transparent" }
+            contentItem: Text {
+                text: menuButton.text
+                color: "#38bdf8"
+                font.pixelSize: 24
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+            }
+        }
+
+        Drawer {
+                id: sideMenu
+                width: parent.width * 0.6
+                height: parent.height
+
+                background: Rectangle {
+                    color: "#0f172a" // Темно-синий фон в стиле Telegram
+                    border.color: "#1e293b"
+                    border.width: 1
+                }
+
+                ColumnLayout {
+                    anchors.fill: parent
+                    anchors.margins: 20
+                    spacing: 15
+
+                    Text {
+                        text: "CyberPass Pro"
+                        color: "#38bdf8"
+                        font.bold: true
+                        font.pixelSize: 20
+                        Layout.bottomMargin: 20
+                    }
+
+                    // ПУНКТ МЕНЮ: Ручной ввод
+                    Button {
+                        text: "➕ Добавить свой пароль"
+                        Layout.fillWidth: true
+                        flat: true
+                        onClicked: {
+                            manualEntryDialog.open()
+                            sideMenu.close()
+                        }
+                        // Можно добавить стили как у кнопок выше
+                    }
+
+                    Button {
+                        text: "⚙️ Настройки"
+                        Layout.fillWidth: true
+                        flat: true
+                        onClicked: sideMenu.close()
+                    }
+
+                    Item { Layout.fillHeight: true } // Распорка, чтобы прижать остальное вниз
+
+                    Text {
+                        text: "v1.0.2 Stable"
+                        color: "#475569"
+                        font.pixelSize: 12
+                    }
+                }
+        }
+
+        Dialog {
+                id: manualEntryDialog
+                title: "Ручной ввод пароля"
+                anchors.centerIn: parent
+                modal: true
+                standardButtons: Dialog.Ok | Dialog.Cancel
+
+                ColumnLayout {
+                    spacing: 10
+                    Text { text: "Введите ваш пароль:"; color: "black" }
+                    TextField {
+                        id: manualPassInput
+                        placeholderText: "Ваш секретный пароль"
+                        Layout.fillWidth: true
+                        echoMode: TextInput.Password // Скроем его при вводе
+                    }
+                }
+
+                onAccepted: {
+                    // Когда нажали ОК, передаем этот пароль в бэкенд
+                    backend.setManualPassword(manualPassInput.text)
+                    manualPassInput.text = ""
+                }
+            }
+
+
+
     ColumnLayout
     {
         anchors.fill: parent

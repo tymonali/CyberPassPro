@@ -123,7 +123,20 @@ Window
 
                     // ПУНКТ МЕНЮ: Ручной ввод
                     Button {
-                        text: "➕ Добавить свой пароль"
+                        id: manualBtn
+                        //text: "➕ Добавить свой пароль"
+                        // Сама надпись
+                        contentItem: Text {
+                            text: "➕ Добавить свой пароль"
+                            color: manualBtn.pressed ? "#f0abfc" : "#38bdf8" // Розовый при нажатии, голубой обычно
+                            font.pixelSize: 16
+                            verticalAlignment: Text.AlignVCenter
+                            leftPadding: 10
+                        }
+                        background: Rectangle {
+                            color: manualBtn.hovered ? "#1e293b" : "transparent"
+                            radius: 4
+                        }
                         Layout.fillWidth: true
                         flat: true
                         onClicked: {
@@ -134,9 +147,21 @@ Window
                     }
 
                     Button {
-                        text: "⚙️ Настройки"
+                        id: prefBtn
+                        //text: "⚙️ Настройки"
                         Layout.fillWidth: true
                         flat: true
+                        contentItem: Text {
+                            text: "⚙️ Настройки"
+                            color: prefBtn.pressed ? "#f0abfc" : "#38bdf8" // Розовый при нажатии, голубой обычно
+                            font.pixelSize: 16
+                            verticalAlignment: Text.AlignVCenter
+                            leftPadding: 10
+                        }
+                        background: Rectangle {
+                            color: prefBtn.hovered ? "#1e293b" : "transparent"
+                            radius: 4
+                        }
                         onClicked: sideMenu.close()
                     }
 
@@ -157,14 +182,36 @@ Window
                 modal: true
                 standardButtons: Dialog.Ok | Dialog.Cancel
 
+                background: Rectangle {
+                    color: "#0f172a"
+                    border.color: "#38bdf8"
+                    radius: 10
+                }
+
+                header: Rectangle {
+                    color: "#1e293b"
+                    height: 40
+                    radius: 10 // Нужно будет подрезать нижние углы или оставить так
+                    Text {
+                        anchors.centerIn: parent
+                        text: "РУЧНОЙ ВВОД"
+                        color: "#38bdf8"
+                        font.bold: true
+                    }
+                }
+
                 ColumnLayout {
                     spacing: 10
-                    Text { text: "Введите ваш пароль:"; color: "black" }
+                    Text {
+                        text: "Введите ваш секретный пароль:"
+                        color: "#f8fafc" // Белый текст
+                    }
                     TextField {
                         id: manualPassInput
-                        placeholderText: "Ваш секретный пароль"
                         Layout.fillWidth: true
-                        echoMode: TextInput.Password // Скроем его при вводе
+                        color: "white"
+                        echoMode: TextInput.Password
+                        background: Rectangle { color: "#1e293b"; radius: 5 }
                     }
                 }
 
@@ -203,8 +250,10 @@ Window
             {
                 id: urlInput
                 Layout.fillWidth: true
+                color: "#f8fafc" // Почти белый (Slate 50)
                 placeholderText: "https://example.com"
-                color: "white"
+                placeholderTextColor: "#64748b" // Серый текст подсказки
+                //color: "white"
                 background: Rectangle { color: "#1e293b"; radius: 6; border.color: parent.activeFocus ? "#38bdf8" : "transparent" }
 
                 // Триггер интеллектуального ввода

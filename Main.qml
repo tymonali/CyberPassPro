@@ -176,51 +176,101 @@ Window
         }
 
         Dialog {
-                id: manualEntryDialog
-                title: "Ручной ввод пароля"
-                anchors.centerIn: parent
-                modal: true
-                standardButtons: Dialog.Ok | Dialog.Cancel
+            id: manualEntryDialog
+            anchors.centerIn: parent
+            width: 300
+            modal: true
+            title: "РУЧНОЙ ВВОД"
 
-                background: Rectangle {
-                    color: "#0f172a"
-                    border.color: "#38bdf8"
-                    radius: 10
+            // 1. Фон всего окна
+            background: Rectangle {
+                color: "#0f172a"
+                border.color: "#38bdf8"
+                border.width: 2
+                radius: 10
+            }
+
+            // 2. Шапка (Заголовок)
+            header: Label {
+                text: manualEntryDialog.title
+                color: "#38bdf8"
+                font.bold: true
+                padding: 15
+                horizontalAlignment: Text.AlignHCenter
+            }
+
+            // 3. Основное содержимое (вместо ColumnLayout напрямую в Dialog)
+            contentItem: ColumnLayout {
+                spacing: 15
+
+                Label {
+                    text: "Введите ваш секретный пароль:"
+                    color: "#94a3b8"
+                    font.pixelSize: 14
+                    Layout.alignment: Qt.AlignHCenter
                 }
 
-                header: Rectangle {
-                    color: "#1e293b"
-                    height: 40
-                    radius: 10 // Нужно будет подрезать нижние углы или оставить так
-                    Text {
-                        anchors.centerIn: parent
-                        text: "РУЧНОЙ ВВОД"
-                        color: "#38bdf8"
+                TextField {
+                    id: manualPassInput
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 40
+                    color: "white" // Цвет вводимых символов
+                    font.pixelSize: 16
+                    echoMode: TextInput.Password // Скрывать символы звездочками
+                    selectionColor: "#38bdf8"
+
+                    placeholderText: "••••••••"
+                    placeholderTextColor: "#475569"
+
+                    background: Rectangle {
+                        color: "#1e293b"
+                        radius: 5
+                        border.color: parent.activeFocus ? "#38bdf8" : "#334155"
+                    }
+                }
+            }
+
+            // 4. Кнопки (Footer)
+            footer: RowLayout {
+                spacing: 0
+                height: 50
+
+                Button {
+                    text: "ОК"
+                    Layout.fillWidth: true
+                    flat: true
+                    onClicked: manualEntryDialog.accept()
+
+                    contentItem: Text {
+                        text: "ОК"
+                        color: "#10b981" // Зеленый для подтверждения
                         font.bold: true
+                        horizontalAlignment: Text.AlignHCenter
                     }
                 }
 
-                ColumnLayout {
-                    spacing: 10
-                    Text {
-                        text: "Введите ваш секретный пароль:"
-                        color: "#f8fafc" // Белый текст
-                    }
-                    TextField {
-                        id: manualPassInput
-                        Layout.fillWidth: true
-                        color: "white"
-                        echoMode: TextInput.Password
-                        background: Rectangle { color: "#1e293b"; radius: 5 }
+                Button {
+                    text: "ОТМЕНА"
+                    Layout.fillWidth: true
+                    flat: true
+                    onClicked: manualEntryDialog.reject()
+
+                    contentItem: Text {
+                        text: "ОТМЕНА"
+                        color: "#f43f5e" // Красный для отмены
+                        font.bold: true
+                        horizontalAlignment: Text.AlignHCenter
                     }
                 }
+            }
 
-                onAccepted: {
-                    // Когда нажали ОК, передаем этот пароль в бэкенд
+            onAccepted: {
+                if (manualPassInput.text !== "") {
                     backend.setManualPassword(manualPassInput.text)
                     manualPassInput.text = ""
                 }
             }
+        }
 
 
 

@@ -1,0 +1,6 @@
+/.cmake/
+/build*/
+/out/
+CMakeLists.txt.user
+*.txt
+# (пароли passwords.txt мы тоже игнорируем из соображений безопасности!)

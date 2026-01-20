@@ -271,6 +271,8 @@ Window
         onAccepted: {
             if (manualPassInput.text !== "") {
                 backend.setManualPassword(manualPassInput.text)
+                // Синхронизируем слайдер с длиной ручного пароля
+                lenSlider.value = manualPassInput.text.length
                 manualPassInput.text = ""
             }
         }
@@ -309,7 +311,40 @@ Window
                 placeholderTextColor: "#64748b" // Серый текст подсказки
                 //color: "white"
                 background: Rectangle { color: "#1e293b"; radius: 6; border.color: parent.activeFocus ? "#38bdf8" : "transparent" }
+                Button {
+                        anchors.right: parent.right
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.rightMargin: 10
+                        width: 24; height: 24
+                        flat: true
 
+                        contentItem: Text {
+                            text: "🌐"
+                            font.pixelSize: 18
+                            verticalAlignment: Text.AlignVCenter
+                            horizontalAlignment: Text.AlignHCenter
+                            color: parent.hovered ? "#38bdf8" : "#64748b"
+                        }
+
+                        background: Rectangle { color: "transparent" }
+
+                        onClicked: {
+                            let currentUrl = urlInput.text.trim()
+                            if (currentUrl === "") return
+
+                            // Если пользователь забыл протокол, добавляем его сами
+                            if (!currentUrl.startsWith("http://") && !currentUrl.startsWith("https://")) {
+                                currentUrl = "https://" + currentUrl
+                                urlInput.text = currentUrl
+                            }
+
+                            // Запускаем поиск заголовка принудительно
+                            dotsTimer.count = 0
+                            dotsTimer.start()
+                            timeoutTimer.start()
+                            backend.fetchSiteTitle(currentUrl)
+                        }
+                    }
                 // Триггер интеллектуального ввода
                 onTextChanged: {
                     if (text.includes("http")) {
@@ -347,13 +382,17 @@ Window
             TextField {
                 id: resourceInput
                 Layout.fillWidth: true
-                placeholderText: "Название определится само или введите вручную..."
-                color: text === "" ? "#fb7185" : "white" // Подсветка розовым, если пусто
+                placeholderText: (resourceInput.color == "#f87171")
+                                 ? "Введите название ресурса самостоятельно"
+                                 : "Название определится само..."
+                placeholderTextColor: "#64748b"
+                color: text === "" ? "#64748b" : "white" // Подсветка розовым, если пусто
 
                 background: Rectangle {
                     color: "#1e293b"
                     radius: 6
-                    border.color: parent.text === "" ? "#e11d48" : "#334155" // Красная рамка, если пусто
+                    border.color: parent.activeFocus ? "#38bdf8" :
+                                                       (parent.color == "#f87171" ? "#ef4444" : "transparent")
                     border.width: parent.text === "" ? 2 : 1
                 }
             }
@@ -590,24 +629,18 @@ Window
                 layoutDirection: Qt.LeftToRight
 
                 Repeater {
+                    // 1. Модель привязываем к РЕАЛЬНОМУ количеству символов
                     model: backend.lastPassword.length
-                    // Теперь количество квадратиков всегда равно значению слайдера
-                    //model: Math.round(lenSlider.value)
-                    delegate: Rectangle {
-                            // Твой текущий дизайн квадратика...
-                            Text {
-                                // ...
-                                text: backend.lastPassword[index] // index — это встроенная переменная Repeater
-                            }
-                        }
-                    // Используем наш новый хакерский компонент
+
+                    // 2. Используем ТОЛЬКО наш красивый PasswordCell
                     PasswordCell {
-                        // Логика отображения символа:
-                        // Если длина пароля в бэкенде совпадает с текущим количеством слотов,
-                        // показываем символ. Иначе (при движении ползунка) — оставляем пустым.
-                        targetChar: (backend.lastPassword.length === Math.round(lenSlider.value))
-                                    ? backend.lastPassword[index]
-                                    : ""
+                        // Просто передаем символ из бэкенда по индексу
+                        targetChar: backend.lastPassword[index]
+
+                        // Добавим небольшое улучшение: пусть ячейки
+                        // подстраиваются под размер экрана, если их много
+                        width: backend.lastPassword.length > 12 ? 25 : 35
+                        height: 45
                     }
                 }
             }
